@@ -21,8 +21,6 @@ namespace ad_automation
         string advertPath = "";
         string promoPath = "";
         string targetPath = "";
-        int adsPerBreak = 2;
-        int promosPerBreak = 3;
         DateTime nextMonday;
         public static List<advert> allAdverts = new List<advert>();
         public static List<advert> adsToPlayPerDay = new List<advert>(); // List of adverts by number of plays needed
@@ -210,113 +208,8 @@ namespace ad_automation
             int numericRnd = rnd.Next(0, adsToPlayPerDay.Count);
             return adsToPlayPerDay[numericRnd];
         }
-        /*
-        private void old_generateBreaksButton_Click(object sender, EventArgs e)
-        {
-            availableAds = getMP3sInFolder(advertPath);
-            availablePromos = getMP3sInFolder(promoPath);
-            setUpAdLog();
-            createTargetDirectory();
-            List<string> allBreaksLst = new List<string> { "_Overnight1", "_Overnight2", "_Overnight3", "_Overnight4", "_Overnight5", "_Overnight6", "Mon_0620", "Mon_0640", "Mon_0720", "Mon_0740", "Mon_0820", "Mon_0840", "Mon_0920", "Mon_0940", "Mon_1020", "Mon_1040", "Mon_1120", "Mon_1140", "Mon_1220", "Mon_1240", "Mon_1320", "Mon_1340", "Mon_1420", "Mon_1440", "Mon_1520", "Mon_1540", "Mon_1620", "Mon_1640", "Mon_1720", "Mon_1740", "Mon_1820", "Mon_1840", "Tue_0620", "Tue_0640", "Tue_0720", "Tue_0740", "Tue_0820", "Tue_0840", "Tue_0920", "Tue_0940", "Tue_1020", "Tue_1040", "Tue_1120", "Tue_1140", "Tue_1220", "Tue_1240", "Tue_1320", "Tue_1340", "Tue_1420", "Tue_1440", "Tue_1520", "Tue_1540", "Tue_1620", "Tue_1640", "Tue_1720", "Tue_1740", "Tue_1820", "Tue_1840", "Wed_0620", "Wed_0640", "Wed_0720", "Wed_0740", "Wed_0820", "Wed_0840", "Wed_0920", "Wed_0940", "Wed_1020", "Wed_1040", "Wed_1120", "Wed_1140", "Wed_1220", "Wed_1240", "Wed_1320", "Wed_1340", "Wed_1420", "Wed_1440", "Wed_1520", "Wed_1540", "Wed_1620", "Wed_1640", "Wed_1720", "Wed_1740", "Wed_1820", "Wed_1840", "Thur_0620", "Thur_0640", "Thur_0720", "Thur_0740", "Thur_0820", "Thur_0840", "Thur_0920", "Thur_0940", "Thur_1020", "Thur_1040", "Thur_1120", "Thur_1140", "Thur_1220", "Thur_1240", "Thur_1320", "Thur_1340", "Thur_1420", "Thur_1440", "Thur_1520", "Thur_1540", "Thur_1620", "Thur_1640", "Thur_1720", "Thur_1740", "Thur_1820", "Thur_1840", "Fri_0620", "Fri_0640", "Fri_0720", "Fri_0740", "Fri_0820", "Fri_0840", "Fri_0920", "Fri_0940", "Fri_1020", "Fri_1040", "Fri_1120", "Fri_1140", "Fri_1220", "Fri_1240", "Fri_1320", "Fri_1340", "Fri_1420", "Fri_1440", "Fri_1520", "Fri_1540", "Fri_1620", "Fri_1640", "Fri_1720", "Fri_1740", "Sat_0820", "Sat_0840", "Sat_0920", "Sat_0940", "Sat_1020", "Sat_1040", "Sat_1120", "Sat_1140", "Sun_0820", "Sun_0840", "Sun_0920", "Sun_0940", "Sun_1020", "Sun_1040", "Sun_1120", "Sun_1140", "Sun_1220", "Sun_1240"};
-            List<string> eveningBreaks = addEveningBreaks();
-            allBreaksLst.AddRange(eveningBreaks);
-            string[] allBreaks = allBreaksLst.ToArray();
-            int totalBreaks = allBreaks.Length;
-            int doneSoFar = 0;
-            progressBar1.Minimum = 0;
-            progressBar1.Maximum = totalBreaks;
-            progressBar1.Value = 1;
-            progressBar1.Step = 1;
-            foreach (string breakId in allBreaks)
-            {
-                doneSoFar++;
-                string m3uOut = "";
-                DateTime breakTargetTime = new DateTime();
-                string breakIdWithDate = "";
-                if (!breakId.Contains("Overnight") && !breakId.Contains("Eve"))
-                {
-                    TimeSpan advertTime = new TimeSpan(int.Parse(breakId.Substring((breakId.Length - 4),2)), int.Parse(breakId.Substring((breakId.Length -2),2)), 0);
-                    if (breakId.Contains("Mon_")) { breakTargetTime = nextMonday; }
-                    else if (breakId.Contains("Tue_")) { breakTargetTime = nextMonday.AddDays(1); }
-                    else if (breakId.Contains("Wed_")) { breakTargetTime = nextMonday.AddDays(2); }
-                    else if (breakId.Contains("Thur_")) { breakTargetTime = nextMonday.AddDays(3); }
-                    else if (breakId.Contains("Fri_")) { breakTargetTime = nextMonday.AddDays(4); }
-                    else if (breakId.Contains("Sat_")) { breakTargetTime = nextMonday.AddDays(5); }
-                    else if (breakId.Contains("Sun_")) { breakTargetTime = nextMonday.AddDays(6); }
-                    breakTargetTime = breakTargetTime.Add(advertTime);
-                    breakIdWithDate = breakTargetTime.ToString("yyyyMMddHHmm");
-                }
-                else
-                {
-                    breakIdWithDate = breakId;
-                }
-                fileBeingGeneratedLabel.Text = "Saving: " + breakIdWithDate + ".m3u";
-                m3uOut += addBreakBumper("Into");
-                for (int i=0; i<(adsPerBreak);)
-                {
-                    string advert = selectAd(breakTargetTime);
-                    if (advert.Length > 1)
-                    {
-                        thisBreak.Add(advert);
-                        string exitingLogEntry = advertLog[advert];
-                        advertLog[advert] = exitingLogEntry + "\r\n--" + breakId;
-                        if (!breakId.Contains("Overnight"))
-                        {
-                            // Don't count plays overnight
-                            int existingPlays = advertPlays[advert];
-                            advertPlays[advert] = existingPlays + 1;
-                        }
-                        m3uOut += studioAdvertsPath.Text  +  advert + "\n";
-                        i++;
-                    }
-                    else
-                    {
-                        if (numFailures > 99)
-                        {
-                            // By the time we've tried 99 times to find an advert that can be played, we give up and play a promo instead
-                            promosPerBreak = promosPerBreak + 1;
-                        }
-                        else { numFailures++;  }
-                    }
-                }
-                numFailures = 0;
-                for (int j = 0; j < (promosPerBreak);)
-                {
-                    string promo = selectPromo(breakTargetTime);
-                    if (promo.Length > 1)
-                    {
-                        thisBreak.Add(promo);
-                        string exitingLogEntry = promoLog[promo];
-                        promoLog[promo] = exitingLogEntry + "\r\n--" + breakId;
-                        int existingPlays = promoPlays[promo];
-                        promoPlays[promo] = existingPlays + 1;
-                        m3uOut += promosStudioPath.Text + promo + "\n";
-                        j++;
-                    }
-                    else
-                    {
-                        numFailures++;
-                        if (numFailures > 99)
-                        {
-                            throw new NotEnoughFileOptionsException("No files haven't been played this or last break");
-                        }
-                    }
-                }
-                m3uOut += addBreakBumper("Out Of");
-                lastBreak = thisBreak;
-                thisBreak = new List<string>();
-                numFailures = 0;
-                progressBar1.PerformStep();
-                Application.DoEvents();
-                Console.WriteLine("== WRITING " + breakIdWithDate + ".m3u");
-                System.IO.File.WriteAllText(targetPath + "\\" + breakIdWithDate + ".m3u", m3uOut);
-            }
-            outputLog();
-            fileBeingGeneratedLabel.Text = "Done";
-            Process.Start(targetPath);
-        }
 
-        */
+
         private void createTargetDirectory()
         {
             string dateTime = DateTime.Now.ToString();
@@ -363,6 +256,7 @@ namespace ad_automation
                 tmpPromo.originalPath = file.FullName;
                 tmpPromo.targetPath =  promosStudioPath.Text +  tmpPromo.filename;
                 tmpPromo.getMP3Comment();
+                tmpPromo.setPriority();
                 allPromos.Add(tmpPromo);
             }
         }
