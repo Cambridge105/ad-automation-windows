@@ -33,6 +33,7 @@ namespace ad_automation
             adForm.lastBreak.Clear();
             adForm.lastBreak = new List<audioFile>(adForm.thisBreak);
             adForm.thisBreak.Clear();
+            adForm.thisBreakKeywords.Clear();
         }
 
         public void outputM3UFile()
@@ -82,10 +83,10 @@ namespace ad_automation
 
         private void addAdverts()
         {
-            int numFailures = 0;
             for (int i = 0; i < targetAds;)
             {
                 advert newAdvert = adForm.selectAd(breakTime);
+                int numFailures = 0;
                 if (newAdvert != null)
                 {
                     breakContents.Add(newAdvert);
@@ -93,17 +94,22 @@ namespace ad_automation
                     var index = adForm.allAdverts.FindIndex(x => x.filename == newAdvert.filename);
                     adForm.allAdverts[index].inBreaks.Add(breakTime);
                     adForm.thisBreak.Add(newAdvert);
-                    i++;
+                    if (newAdvert.keyword != null && newAdvert.keyword.Length > 0) { adForm.thisBreakKeywords.Add(newAdvert.keyword.ToLower()); }
                     numFailures = 0;
+                    i++;
                 }
                 else
                 {
-                    if (numFailures > 99)
+                    if (adForm.adsToPlayPerDay.Count() < 1)
                     {
-                        // By the time we've tried 99 times to find an advert that can be played, we give up and play a promo instead
-                        //targetPromos++;
+                        break; // We've run out of adverts we can play
                     }
-                    else { numFailures++; }
+                    else if (numFailures > 999)
+                    {
+                        // Avoids the unlikely case where we might sit spinning at this point if there's only one advert left to play and it can't be played because of the keyword rule
+                        throw new NotEnoughFileOptionsException("There are adverts left to play but rules prevent them being played");
+                    }
+                    numFailures++;
                 }
             }
         }

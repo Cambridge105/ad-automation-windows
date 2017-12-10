@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,19 @@ namespace ad_automation
         {
             string output = this.filename + "\r\nExpires: " + this.endDate.ToString("dd-MM-yyyy HH:mm") + "\r\nTotal plays: " + this.inBreaks.Count.ToString() + "\r\n\r\n";
             return output;
+        }
+
+
+        internal void deserialiseSavedInfo()
+        {
+            if (serialisedJsonBlock != null && serialisedJsonBlock.Length > 1)
+            {
+                promo tmpPromo = JsonConvert.DeserializeObject<promo>(serialisedJsonBlock);
+                priority = tmpPromo.priority;
+                startDate = tmpPromo.startDate;
+                endDate = tmpPromo.endDate;
+                serialisedJsonBlock = "";
+            }
         }
 
     }

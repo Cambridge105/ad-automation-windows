@@ -21,14 +21,16 @@ namespace ad_automation
         string advertPath = "";
         string promoPath = "";
         string targetPath = "";
-        int adsPerBreak = 0;
-        int promosPerBreak = 0;
+        int adsPerBreak = 2;
+        int promosPerBreak = 3;
         DateTime nextMonday;
         public static List<advert> allAdverts = new List<advert>();
+        public static List<advert> adsToPlayPerDay = new List<advert>(); // List of adverts by number of plays needed
         public static List<promo> allPromos = new List<promo>();
         List<adBreak> allBreaksList = new List<adBreak>();
         public static List<audioFile> thisBreak = new List<audioFile>();
         public static List<audioFile> lastBreak = new List<audioFile>();
+        public static List<string> thisBreakKeywords = new List<string>();
 
         public static string jingleStudioPathValue { get; private set; }
 
@@ -67,6 +69,7 @@ namespace ad_automation
             {
                 string advertPath = advertBrowserDialog.SelectedPath;
                 advertFolderSelectedLabel.Text = advertPath;
+                getAdvertsInFolder(advertPath);
                 return advertPath;
             }
             return "";
@@ -101,20 +104,12 @@ namespace ad_automation
         {
             if (advertPath.Length>0 && promoPath.Length>0 && targetPath.Length>0)
             {
-                int adsResult;
-                int promosResult;
-                if (int.TryParse(adsPerBreakTextbox.Text, out adsResult) &&  int.TryParse(promosPerBreakTextbox.Text, out promosResult))
-                {
-                    adsPerBreak = int.Parse(adsPerBreakTextbox.Text);
-                    promosPerBreak = int.Parse(promosPerBreakTextbox.Text);
-                    generateBreaksButton.Enabled = true;
-                }
+                 generateBreaksButton.Enabled = true;
             }
         }
 
         private void generateBreaksButton_Click(object sender, EventArgs e)
         {
-            getAdvertsInFolder(advertPath);
             getPromosInFolder(promoPath);
             createTargetDirectory();
             createBreaks();
@@ -155,7 +150,7 @@ namespace ad_automation
         private void createBreaks()
         {
             // TODO: Split this out into a config file
-            List<string> allBreaksLst = new List<string> { "Mon_0620", "Mon_0640", "Mon_0720", "Mon_0740", "Mon_0820", "Mon_0840", "Mon_0920", "Mon_0940", "Mon_1020", "Mon_1040", "Mon_1120", "Mon_1140", "Mon_1220", "Mon_1240", "Mon_1320", "Mon_1340", "Mon_1420", "Mon_1440", "Mon_1520", "Mon_1540", "Mon_1620", "Mon_1640", "Mon_1720", "Mon_1740", "Mon_1820", "Mon_1840", "Tue_0620", "Tue_0640", "Tue_0720", "Tue_0740", "Tue_0820", "Tue_0840", "Tue_0920", "Tue_0940", "Tue_1020", "Tue_1040", "Tue_1120", "Tue_1140", "Tue_1220", "Tue_1240", "Tue_1320", "Tue_1340", "Tue_1420", "Tue_1440", "Tue_1520", "Tue_1540", "Tue_1620", "Tue_1640", "Tue_1720", "Tue_1740", "Tue_1820", "Tue_1840", "Wed_0620", "Wed_0640", "Wed_0720", "Wed_0740", "Wed_0820", "Wed_0840", "Wed_0920", "Wed_0940", "Wed_1020", "Wed_1040", "Wed_1120", "Wed_1140", "Wed_1220", "Wed_1240", "Wed_1320", "Wed_1340", "Wed_1420", "Wed_1440", "Wed_1520", "Wed_1540", "Wed_1620", "Wed_1640", "Wed_1720", "Wed_1740", "Wed_1820", "Wed_1840", "Thur_0620", "Thur_0640", "Thur_0720", "Thur_0740", "Thur_0820", "Thur_0840", "Thur_0920", "Thur_0940", "Thur_1020", "Thur_1040", "Thur_1120", "Thur_1140", "Thur_1220", "Thur_1240", "Thur_1320", "Thur_1340", "Thur_1420", "Thur_1440", "Thur_1520", "Thur_1540", "Thur_1620", "Thur_1640", "Thur_1720", "Thur_1740", "Thur_1820", "Thur_1840", "Fri_0620", "Fri_0640", "Fri_0720", "Fri_0740", "Fri_0820", "Fri_0840", "Fri_0920", "Fri_0940", "Fri_1020", "Fri_1040", "Fri_1120", "Fri_1140", "Fri_1220", "Fri_1240", "Fri_1320", "Fri_1340", "Fri_1420", "Fri_1440", "Fri_1520", "Fri_1540", "Fri_1620", "Fri_1640", "Fri_1720", "Fri_1740", "Sat_0820", "Sat_0840", "Sat_0920", "Sat_0940", "Sat_1020", "Sat_1040", "Sat_1120", "Sat_1140", "Sun_0820", "Sun_0840", "Sun_0920", "Sun_0940", "Sun_1020", "Sun_1040", "Sun_1120", "Sun_1140", "Sun_1220", "Sun_1240" };
+            List<string> allBreaksLst = new List<string> { "Mon_0620", "Mon_0640", "Mon_0720", "Mon_0740", "Mon_0820", "Mon_0840", "Mon_0920", "Mon_0940", "Mon_1020", "Mon_1040", "Mon_1120", "Mon_1140", "Mon_1220", "Mon_1240", "Mon_1320", "Mon_1340", "Mon_1420", "Mon_1440", "Mon_1520", "Mon_1540", "Mon_1620", "Mon_1640", "Mon_1720", "Mon_1740", "Mon_1820", "Mon_1840"};
             string[] allBreaks = allBreaksLst.ToArray();
             foreach (string breakId in allBreaks)
             {
@@ -173,8 +168,10 @@ namespace ad_automation
                 tmpBreak.breakTime = breakTargetTime;
                 tmpBreak.outputFilename = breakTargetTime.ToString("yyyyMMddHHmm") + ".m3u";
                 tmpBreak.outputFullPath = targetPath + "\\" + tmpBreak.outputFilename;
-                tmpBreak.targetAds = adsPerBreak;
-                tmpBreak.targetPromos = promosPerBreak;
+                double adsToPlayPerBreak = (double)adsToPlayPerDay.Count / allBreaks.Length;
+                double adsToPlayPerBreakCeil = Math.Ceiling(adsToPlayPerBreak);
+                tmpBreak.targetAds = (int)adsToPlayPerBreakCeil;
+                tmpBreak.targetPromos = 5 - tmpBreak.targetAds;
                 tmpBreak.setIsOvernight();
                 allBreaksList.Add(tmpBreak);
                 // TODO: Handle overnight/evenings
@@ -184,7 +181,11 @@ namespace ad_automation
         public static advert selectAd(DateTime breakTargetTime)
         {
             advert suggestedAd = chooseAdvertAtRandom();
-            if (suggestedAd.canAdBePlayedInBreak(breakTargetTime)) { return suggestedAd; }
+            if (suggestedAd == null) { return null; }
+            if (suggestedAd.canAdBePlayedInBreak(breakTargetTime)) {
+                adsToPlayPerDay.Remove(suggestedAd);
+                return suggestedAd;
+            }
             return null;
         }
 
@@ -204,9 +205,10 @@ namespace ad_automation
 
         private static advert chooseAdvertAtRandom()
         {
+            if (adsToPlayPerDay.Count <1) { return null; }
             Random rnd = new Random();
-            int numericRnd = rnd.Next(0, allAdverts.Count);
-            return allAdverts[numericRnd];
+            int numericRnd = rnd.Next(0, adsToPlayPerDay.Count);
+            return adsToPlayPerDay[numericRnd];
         }
         /*
         private void old_generateBreaksButton_Click(object sender, EventArgs e)
@@ -329,6 +331,9 @@ namespace ad_automation
         private void getAdvertsInFolder(string folderPath)
         {
             DirectoryInfo d = new DirectoryInfo(folderPath);
+            advertTablePanel.RowCount = 0;
+            advertTablePanel.RowStyles.Clear();
+            advertTablePanel.AutoScroll = true;
             FileInfo[] Files = d.GetFiles("*.mp3");
             foreach (FileInfo file in Files)
             {
@@ -336,8 +341,14 @@ namespace ad_automation
                 tmpAd.filename = file.Name;
                 tmpAd.originalPath = file.FullName;
                 tmpAd.targetPath = studioAdvertsPath.Text + tmpAd.filename;
-                tmpAd.getExpiryDate();
+                tmpAd.getMP3Comment();
+                tmpAd.deserialiseSavedInfo();
+                tmpAd.addToAdvertTablePanel(advertTablePanel);
                 allAdverts.Add(tmpAd);
+                for (int i = 0; i<tmpAd.targetPlaysPerDay; i++)
+                {
+                    adsToPlayPerDay.Add(tmpAd);
+                }
             }
         }
 
@@ -351,7 +362,7 @@ namespace ad_automation
                 tmpPromo.filename = file.Name;
                 tmpPromo.originalPath = file.FullName;
                 tmpPromo.targetPath =  promosStudioPath.Text +  tmpPromo.filename;
-                tmpPromo.getExpiryDate();
+                tmpPromo.getMP3Comment();
                 allPromos.Add(tmpPromo);
             }
         }
@@ -363,9 +374,6 @@ namespace ad_automation
             // From: https://stackoverflow.com/questions/28511858/update-label-through-another-class
             adBreak.StatusTextChanged += (sender1, e1) => fileBeingGeneratedLabel.Text = adBreak.StatusText;
         }
-
-       
-
     }
 
     [Serializable]

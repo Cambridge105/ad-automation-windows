@@ -14,6 +14,8 @@ namespace ad_automation
         public string filename;
         public string targetPath;
         public string originalPath;
+        public string mp3CommentString;
+        public string serialisedJsonBlock;
 
         int playsPerDay(DateTime targetDay, bool includeOvernight)
         {
@@ -41,6 +43,28 @@ namespace ad_automation
                 return true;
             }
             return false;
+        }
+
+        public void getMP3Comment()
+        {
+            TagLib.File tmpFile = TagLib.File.Create(this.originalPath);
+            if (tmpFile.Tag.Comment != null)
+            {
+                if (tmpFile.Tag.Comment.Contains("###ADDATA###"))
+                {
+                    //The original comment will be before the ADDATA block
+                    string origComment = tmpFile.Tag.Comment.Substring(0, tmpFile.Tag.Comment.IndexOf("###ADDATA###"));
+                    mp3CommentString = origComment;
+                    string adDataBlock = tmpFile.Tag.Comment.Replace(origComment, "");
+                    adDataBlock = adDataBlock.Replace("###ADDATA###", "");
+                    serialisedJsonBlock = adDataBlock;
+                }
+                else
+                {
+                    mp3CommentString = tmpFile.Tag.Comment;
+                }
+
+            }
         }
 
         public void getExpiryDate()
