@@ -58,6 +58,7 @@
             this.fileBeingGeneratedLabel = new System.Windows.Forms.Label();
             this.createBreaksForPicker = new System.Windows.Forms.DateTimePicker();
             this.breaksToCreateGroupBox = new System.Windows.Forms.GroupBox();
+            this.breakTimesOnDayTextBox = new System.Windows.Forms.TextBox();
             this.inputGroupBox.SuspendLayout();
             this.advertTablePanel.SuspendLayout();
             this.promosGroupBox.SuspendLayout();
@@ -102,7 +103,7 @@
             this.advertTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
             this.advertTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
             this.advertTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.advertTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
+            this.advertTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 115F));
             this.advertTablePanel.Controls.Add(this.categoryLabel, 1, 0);
             this.advertTablePanel.Controls.Add(this.filenameLabel, 0, 0);
             this.advertTablePanel.Controls.Add(this.saveTrackDataLabel, 5, 0);
@@ -351,9 +352,11 @@
             this.createBreaksForPicker.Size = new System.Drawing.Size(200, 20);
             this.createBreaksForPicker.TabIndex = 13;
             this.createBreaksForPicker.Value = new System.DateTime(2017, 12, 10, 17, 54, 31, 0);
+            this.createBreaksForPicker.ValueChanged += new System.EventHandler(this.createBreaksForPicker_ValueChanged);
             // 
             // breaksToCreateGroupBox
             // 
+            this.breaksToCreateGroupBox.Controls.Add(this.breakTimesOnDayTextBox);
             this.breaksToCreateGroupBox.Controls.Add(this.createBreaksForLabel);
             this.breaksToCreateGroupBox.Controls.Add(this.createBreaksForPicker);
             this.breaksToCreateGroupBox.Location = new System.Drawing.Point(12, 480);
@@ -362,6 +365,15 @@
             this.breaksToCreateGroupBox.TabIndex = 14;
             this.breaksToCreateGroupBox.TabStop = false;
             this.breaksToCreateGroupBox.Text = "Breaks to create:";
+            // 
+            // breakTimesOnDayTextBox
+            // 
+            this.breakTimesOnDayTextBox.Location = new System.Drawing.Point(13, 56);
+            this.breakTimesOnDayTextBox.Multiline = true;
+            this.breakTimesOnDayTextBox.Name = "breakTimesOnDayTextBox";
+            this.breakTimesOnDayTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.breakTimesOnDayTextBox.Size = new System.Drawing.Size(331, 97);
+            this.breakTimesOnDayTextBox.TabIndex = 14;
             // 
             // adForm
             // 
@@ -427,6 +439,7 @@
         private System.Windows.Forms.Label categoryHelpTextLabel;
         private System.Windows.Forms.DateTimePicker createBreaksForPicker;
         private System.Windows.Forms.GroupBox breaksToCreateGroupBox;
+        private System.Windows.Forms.TextBox breakTimesOnDayTextBox;
     }
 }
 

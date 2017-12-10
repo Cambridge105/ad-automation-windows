@@ -29,6 +29,7 @@ namespace ad_automation
         public static List<audioFile> thisBreak = new List<audioFile>();
         public static List<audioFile> lastBreak = new List<audioFile>();
         public static List<string> thisBreakKeywords = new List<string>();
+        public bool advertDateHasBeenSet = false;
 
         public static string jingleStudioPathValue { get; private set; }
 
@@ -100,9 +101,9 @@ namespace ad_automation
 
         private void canGenerateButtonBeDisabled()
         {
-            if (advertPath.Length>0 && promoPath.Length>0 && targetPath.Length>0)
+            if (advertPath.Length > 0 && promoPath.Length > 0 && targetPath.Length > 0 && advertDateHasBeenSet)
             {
-                 generateBreaksButton.Enabled = true;
+                generateBreaksButton.Enabled = true;
             }
         }
 
@@ -148,20 +149,12 @@ namespace ad_automation
         private void createBreaks()
         {
             // TODO: Split this out into a config file
-            List<string> allBreaksLst = new List<string> { "Mon_0620", "Mon_0640", "Mon_0720", "Mon_0740", "Mon_0820", "Mon_0840", "Mon_0920", "Mon_0940", "Mon_1020", "Mon_1040", "Mon_1120", "Mon_1140", "Mon_1220", "Mon_1240", "Mon_1320", "Mon_1340", "Mon_1420", "Mon_1440", "Mon_1520", "Mon_1540", "Mon_1620", "Mon_1640", "Mon_1720", "Mon_1740", "Mon_1820", "Mon_1840"};
-            string[] allBreaks = allBreaksLst.ToArray();
+            string[] allBreaks = breakTimesOnDayTextBox.Lines;
             foreach (string breakId in allBreaks)
             {
                 adBreak tmpBreak = new adBreak();
-                DateTime breakTargetTime = new DateTime();
-                TimeSpan advertTime = new TimeSpan(int.Parse(breakId.Substring((breakId.Length - 4), 2)), int.Parse(breakId.Substring((breakId.Length - 2), 2)), 0);
-                if (breakId.Contains("Mon_")) { breakTargetTime = nextMonday; }
-                else if (breakId.Contains("Tue_")) { breakTargetTime = nextMonday.AddDays(1); }
-                else if (breakId.Contains("Wed_")) { breakTargetTime = nextMonday.AddDays(2); }
-                else if (breakId.Contains("Thur_")) { breakTargetTime = nextMonday.AddDays(3); }
-                else if (breakId.Contains("Fri_")) { breakTargetTime = nextMonday.AddDays(4); }
-                else if (breakId.Contains("Sat_")) { breakTargetTime = nextMonday.AddDays(5); }
-                else if (breakId.Contains("Sun_")) { breakTargetTime = nextMonday.AddDays(6); }
+                DateTime breakTargetTime = createBreaksForPicker.Value.Date;
+                TimeSpan advertTime = new TimeSpan(int.Parse(breakId.Substring(0, 2)), int.Parse(breakId.Substring(3, 2)), 0);
                 breakTargetTime = breakTargetTime.Add(advertTime);
                 tmpBreak.breakTime = breakTargetTime;
                 tmpBreak.outputFilename = breakTargetTime.ToString("yyyyMMddHHmm") + ".m3u";
@@ -180,7 +173,8 @@ namespace ad_automation
         {
             advert suggestedAd = chooseAdvertAtRandom();
             if (suggestedAd == null) { return null; }
-            if (suggestedAd.canAdBePlayedInBreak(breakTargetTime)) {
+            if (suggestedAd.canAdBePlayedInBreak(breakTargetTime))
+            {
                 adsToPlayPerDay.Remove(suggestedAd);
                 return suggestedAd;
             }
@@ -203,7 +197,7 @@ namespace ad_automation
 
         private static advert chooseAdvertAtRandom()
         {
-            if (adsToPlayPerDay.Count <1) { return null; }
+            if (adsToPlayPerDay.Count < 1) { return null; }
             Random rnd = new Random();
             int numericRnd = rnd.Next(0, adsToPlayPerDay.Count);
             return adsToPlayPerDay[numericRnd];
@@ -238,7 +232,7 @@ namespace ad_automation
                 tmpAd.deserialiseSavedInfo();
                 tmpAd.addToAdvertTablePanel(advertTablePanel);
                 allAdverts.Add(tmpAd);
-                for (int i = 0; i<tmpAd.targetPlaysPerDay; i++)
+                for (int i = 0; i < tmpAd.targetPlaysPerDay; i++)
                 {
                     adsToPlayPerDay.Add(tmpAd);
                 }
@@ -254,29 +248,52 @@ namespace ad_automation
                 promo tmpPromo = new promo();
                 tmpPromo.filename = file.Name;
                 tmpPromo.originalPath = file.FullName;
-                tmpPromo.targetPath =  promosStudioPath.Text +  tmpPromo.filename;
+                tmpPromo.targetPath = promosStudioPath.Text + tmpPromo.filename;
                 tmpPromo.getMP3Comment();
-                tmpPromo.setPriority();
+                tmpPromo.setPriority(createBreaksForPicker.Value);
                 allPromos.Add(tmpPromo);
             }
         }
 
- 
+
 
         private void adForm_Load(object sender, EventArgs e)
         {
             // From: https://stackoverflow.com/questions/28511858/update-label-through-another-class
             adBreak.StatusTextChanged += (sender1, e1) => fileBeingGeneratedLabel.Text = adBreak.StatusText;
         }
-    }
 
-    [Serializable]
-    internal class NotEnoughFileOptionsException : Exception
-    {
-        
-        public NotEnoughFileOptionsException(string message) : base(message)
+        private void createBreaksForPicker_ValueChanged(object sender, EventArgs e)
         {
+            DateTime breakDate = createBreaksForPicker.Value.Date;
+            string[] breaksOnDay = new string[] { "Select the day to set advert times" };
+            switch (breakDate.DayOfWeek)
+            {
+                case DayOfWeek.Monday: string[] breaksOnMonday = { "06:20", "06:40", "07:20", "07:40", "08:20", "08:40", "09:20", "09:40", "10:20", "10:40", "11:20", "11:40", "12:20", "12:40", "13:20", "13:40", "14:20", "14:40", "15:20", "15:40", "16:20", "16:40", "17:20", "17:40", "18:20", "18:40", "20:59", "22:59" }; breaksOnDay = breaksOnMonday; break;
+                case DayOfWeek.Tuesday: string[] breaksOnTuesday = { "06:20", "06:40", "07:20", "07:40", "08:20", "08:40", "09:20", "09:40", "10:20", "10:40", "11:20", "11:40", "12:20", "12:40", "13:20", "13:40", "14:20", "14:40", "15:20", "15:40", "16:20", "16:40", "17:20", "17:40", "18:20", "18:40", "20:59", "22:59" }; breaksOnDay = breaksOnTuesday; break;
+                case DayOfWeek.Wednesday: string[] breaksOnWednesday = { "06:20", "06:40", "07:20", "07:40", "08:20", "08:40", "09:20", "09:40", "10:20", "10:40", "11:20", "11:40", "12:20", "12:40", "13:20", "13:40", "14:20", "14:40", "15:20", "15:40", "16:20", "16:40", "17:20", "17:40", "18:20", "18:40", "21:59" }; breaksOnDay = breaksOnWednesday; break;
+                case DayOfWeek.Thursday: string[] breaksOnThursday = { "06:20", "06:40", "07:20", "07:40", "08:20", "08:40", "09:20", "09:40", "10:20", "10:40", "11:20", "11:40", "12:20", "12:40", "13:20", "13:40", "14:20", "14:40", "15:20", "15:40", "16:20", "16:40", "17:20", "17:40", "18:20", "18:40", "21:59" }; breaksOnDay = breaksOnThursday; break;
+                case DayOfWeek.Friday: string[] breaksOnFriday = { "06:20", "06:40", "07:20", "07:40", "08:20", "08:40", "09:20", "09:40", "10:20", "10:40", "11:20", "11:40", "12:20", "12:40", "13:20", "13:40", "14:20", "14:40", "15:20", "15:40", "16:20", "16:40", "17:20", "17:40", "21:59" }; breaksOnDay = breaksOnFriday; break;
+                case DayOfWeek.Saturday: string[] breaksOnSaturday = { "08:20", "08:40", "09:20", "09:40", "10:20", "10:40", "11:20", "11:40" }; breaksOnDay = breaksOnSaturday; break;
+                case DayOfWeek.Sunday: string[] breaksOnSunday = { "08:20", "08:40", "09:20", "09:40", "10:20", "10:40", "11:20", "11:40", "12:20", "12:40", "12:59" }; breaksOnDay = breaksOnSunday; break;
+            }
+            breakTimesOnDayTextBox.Lines = breaksOnDay;
+            advertDateHasBeenSet = true;
+            canGenerateButtonBeDisabled();
         }
-        
     }
 }
+
+
+
+
+        [Serializable]
+        internal class NotEnoughFileOptionsException : Exception
+        {
+
+            public NotEnoughFileOptionsException(string message) : base(message)
+            {
+            }
+
+        }
+ 

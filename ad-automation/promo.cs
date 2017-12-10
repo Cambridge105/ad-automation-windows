@@ -38,9 +38,9 @@ namespace ad_automation
             }
         }
 
-        internal void setPriority()
+        internal void setPriority(DateTime breakTime)
         {
-            if (endDate.Subtract(DateTime.Now).TotalHours < 72) { priority = 1; }
+            if (endDate.Subtract(breakTime).TotalHours < 72) { priority = 1; }
             else if (filename.Contains("Cam105")) { priority = 3; }
             else { priority = 2; }
         }
