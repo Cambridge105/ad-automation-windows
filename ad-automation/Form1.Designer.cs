@@ -54,6 +54,11 @@
             this.savePlaylistsInButton = new System.Windows.Forms.Button();
             this.savePlaylistsInFolderSelectedLabel = new System.Windows.Forms.Label();
             this.promosGroupBox = new System.Windows.Forms.GroupBox();
+            this.promoTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.promoPlayFromLabel = new System.Windows.Forms.Label();
+            this.promoFilenameLabel = new System.Windows.Forms.Label();
+            this.promoPlayUntilLabel = new System.Windows.Forms.Label();
+            this.promosSaveLabel = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.fileBeingGeneratedLabel = new System.Windows.Forms.Label();
             this.createBreaksForPicker = new System.Windows.Forms.DateTimePicker();
@@ -62,6 +67,7 @@
             this.inputGroupBox.SuspendLayout();
             this.advertTablePanel.SuspendLayout();
             this.promosGroupBox.SuspendLayout();
+            this.promoTableLayoutPanel.SuspendLayout();
             this.breaksToCreateGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -217,7 +223,7 @@
             // 
             // jinglesStudioPath
             // 
-            this.jinglesStudioPath.Location = new System.Drawing.Point(170, 454);
+            this.jinglesStudioPath.Location = new System.Drawing.Point(169, 451);
             this.jinglesStudioPath.Name = "jinglesStudioPath";
             this.jinglesStudioPath.Size = new System.Drawing.Size(253, 20);
             this.jinglesStudioPath.TabIndex = 12;
@@ -226,7 +232,7 @@
             // jinglesStudioPathLabel
             // 
             this.jinglesStudioPathLabel.AutoSize = true;
-            this.jinglesStudioPathLabel.Location = new System.Drawing.Point(99, 457);
+            this.jinglesStudioPathLabel.Location = new System.Drawing.Point(99, 454);
             this.jinglesStudioPathLabel.Name = "jinglesStudioPathLabel";
             this.jinglesStudioPathLabel.Size = new System.Drawing.Size(64, 13);
             this.jinglesStudioPathLabel.TabIndex = 11;
@@ -235,7 +241,7 @@
             // jinglesLabel
             // 
             this.jinglesLabel.AutoSize = true;
-            this.jinglesLabel.Location = new System.Drawing.Point(34, 457);
+            this.jinglesLabel.Location = new System.Drawing.Point(25, 454);
             this.jinglesLabel.Name = "jinglesLabel";
             this.jinglesLabel.Size = new System.Drawing.Size(42, 13);
             this.jinglesLabel.TabIndex = 10;
@@ -318,6 +324,7 @@
             // 
             // promosGroupBox
             // 
+            this.promosGroupBox.Controls.Add(this.promoTableLayoutPanel);
             this.promosGroupBox.Controls.Add(this.promosFolderSelectorButton);
             this.promosGroupBox.Controls.Add(this.promosStudioPath);
             this.promosGroupBox.Controls.Add(this.promosFolderSelectedLabel);
@@ -328,6 +335,70 @@
             this.promosGroupBox.TabIndex = 9;
             this.promosGroupBox.TabStop = false;
             this.promosGroupBox.Text = "Promos:";
+            // 
+            // promoTableLayoutPanel
+            // 
+            this.promoTableLayoutPanel.AutoScroll = true;
+            this.promoTableLayoutPanel.AutoScrollMargin = new System.Drawing.Size(3, 3);
+            this.promoTableLayoutPanel.AutoSize = true;
+            this.promoTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.promoTableLayoutPanel.ColumnCount = 4;
+            this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 330F));
+            this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
+            this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 311F));
+            this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this.promoTableLayoutPanel.Controls.Add(this.promoPlayFromLabel, 1, 0);
+            this.promoTableLayoutPanel.Controls.Add(this.promoFilenameLabel, 0, 0);
+            this.promoTableLayoutPanel.Controls.Add(this.promoPlayUntilLabel, 2, 0);
+            this.promoTableLayoutPanel.Controls.Add(this.promosSaveLabel, 3, 0);
+            this.promoTableLayoutPanel.Location = new System.Drawing.Point(3, 74);
+            this.promoTableLayoutPanel.MaximumSize = new System.Drawing.Size(880, 100);
+            this.promoTableLayoutPanel.MinimumSize = new System.Drawing.Size(880, 100);
+            this.promoTableLayoutPanel.Name = "promoTableLayoutPanel";
+            this.promoTableLayoutPanel.RowCount = 1;
+            this.promoTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.promoTableLayoutPanel.Size = new System.Drawing.Size(880, 100);
+            this.promoTableLayoutPanel.TabIndex = 10;
+            // 
+            // promoPlayFromLabel
+            // 
+            this.promoPlayFromLabel.AutoSize = true;
+            this.promoPlayFromLabel.Location = new System.Drawing.Point(333, 3);
+            this.promoPlayFromLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.promoPlayFromLabel.Name = "promoPlayFromLabel";
+            this.promoPlayFromLabel.Size = new System.Drawing.Size(53, 13);
+            this.promoPlayFromLabel.TabIndex = 6;
+            this.promoPlayFromLabel.Text = "Play from:";
+            // 
+            // promoFilenameLabel
+            // 
+            this.promoFilenameLabel.AutoSize = true;
+            this.promoFilenameLabel.Location = new System.Drawing.Point(3, 3);
+            this.promoFilenameLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.promoFilenameLabel.Name = "promoFilenameLabel";
+            this.promoFilenameLabel.Size = new System.Drawing.Size(49, 13);
+            this.promoFilenameLabel.TabIndex = 6;
+            this.promoFilenameLabel.Text = "Filename";
+            // 
+            // promoPlayUntilLabel
+            // 
+            this.promoPlayUntilLabel.AutoSize = true;
+            this.promoPlayUntilLabel.Location = new System.Drawing.Point(458, 3);
+            this.promoPlayUntilLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.promoPlayUntilLabel.Name = "promoPlayUntilLabel";
+            this.promoPlayUntilLabel.Size = new System.Drawing.Size(52, 13);
+            this.promoPlayUntilLabel.TabIndex = 6;
+            this.promoPlayUntilLabel.Text = "Play until:";
+            // 
+            // promosSaveLabel
+            // 
+            this.promosSaveLabel.AutoSize = true;
+            this.promosSaveLabel.Location = new System.Drawing.Point(769, 3);
+            this.promosSaveLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.promosSaveLabel.Name = "promosSaveLabel";
+            this.promosSaveLabel.Size = new System.Drawing.Size(35, 13);
+            this.promosSaveLabel.TabIndex = 6;
+            this.promosSaveLabel.Text = "Save:";
             // 
             // progressBar1
             // 
@@ -401,6 +472,8 @@
             this.advertTablePanel.PerformLayout();
             this.promosGroupBox.ResumeLayout(false);
             this.promosGroupBox.PerformLayout();
+            this.promoTableLayoutPanel.ResumeLayout(false);
+            this.promoTableLayoutPanel.PerformLayout();
             this.breaksToCreateGroupBox.ResumeLayout(false);
             this.breaksToCreateGroupBox.PerformLayout();
             this.ResumeLayout(false);
@@ -440,6 +513,11 @@
         private System.Windows.Forms.DateTimePicker createBreaksForPicker;
         private System.Windows.Forms.GroupBox breaksToCreateGroupBox;
         private System.Windows.Forms.TextBox breakTimesOnDayTextBox;
+        private System.Windows.Forms.TableLayoutPanel promoTableLayoutPanel;
+        private System.Windows.Forms.Label promoPlayUntilLabel;
+        private System.Windows.Forms.Label promoPlayFromLabel;
+        private System.Windows.Forms.Label promoFilenameLabel;
+        private System.Windows.Forms.Label promosSaveLabel;
     }
 }
 

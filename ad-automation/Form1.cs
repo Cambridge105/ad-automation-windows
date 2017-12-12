@@ -81,6 +81,7 @@ namespace ad_automation
             {
                 string promoPath = promoBrowserDialog.SelectedPath;
                 promosFolderSelectedLabel.Text = promoPath;
+                getPromosInFolder(promoPath);
                 return promoPath;
             }
             return "";
@@ -109,7 +110,6 @@ namespace ad_automation
 
         private void generateBreaksButton_Click(object sender, EventArgs e)
         {
-            getPromosInFolder(promoPath);
             createTargetDirectory();
             createBreaks();
             jingleStudioPathValue = jinglesStudioPath.Text;
@@ -250,7 +250,9 @@ namespace ad_automation
                 tmpPromo.originalPath = file.FullName;
                 tmpPromo.targetPath = promosStudioPath.Text + tmpPromo.filename;
                 tmpPromo.getMP3Comment();
+                tmpPromo.deserialiseSavedInfo();
                 tmpPromo.setPriority(createBreaksForPicker.Value);
+                tmpPromo.addToPromoTablePanel(promoTableLayoutPanel);
                 allPromos.Add(tmpPromo);
             }
         }
