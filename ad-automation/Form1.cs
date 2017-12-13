@@ -36,11 +36,8 @@ namespace ad_automation
         public adForm()
         {
             InitializeComponent();
-            nextMonday = DateTime.Today.AddDays(1);
-            while (nextMonday.DayOfWeek != DayOfWeek.Monday)
-            {
-                nextMonday = nextMonday.AddDays(1);
-            }
+            DateTime tomorrow = DateTime.Today.AddDays(1);
+            createBreaksForPicker.Value = tomorrow;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -253,7 +250,19 @@ namespace ad_automation
                 tmpPromo.deserialiseSavedInfo();
                 tmpPromo.setPriority(createBreaksForPicker.Value);
                 tmpPromo.addToPromoTablePanel(promoTableLayoutPanel);
+                // Add promo mulitple times depending on priorities to weight the probabilityu of it being chosen
                 allPromos.Add(tmpPromo);
+                if (tmpPromo.priority < 3)
+                {
+                    allPromos.Add(tmpPromo);
+                    allPromos.Add(tmpPromo);
+                }
+                if (tmpPromo.priority < 2)
+                {
+                    allPromos.Add(tmpPromo);
+                    allPromos.Add(tmpPromo);
+                    allPromos.Add(tmpPromo);
+                }
             }
         }
 

@@ -10,7 +10,7 @@ namespace ad_automation
 {
     public class promo : audioFile
     {
-        int priority = 0; // 0=Station generic; 1=Has expiry more than 3 days away; 2=Has expiry in next 3 days. Used for weighted probability of being chosen
+        public int priority = 0; // 0=Station generic; 1=Has expiry more than 3 days away; 2=Has expiry in next 3 days. Used for weighted probability of being chosen
 
         public bool canPromoBePlayedInBreak(DateTime breakTime)
         {
@@ -41,7 +41,8 @@ namespace ad_automation
 
         internal void setPriority(DateTime breakTime)
         {
-            if (endDate.Subtract(breakTime).TotalHours < 72) { priority = 1; }
+            double hoursToEndDate = endDate.Subtract(breakTime).TotalHours;
+            if (hoursToEndDate < 72) { priority = 1; }
             else if (filename.Contains("Cam105")) { priority = 3; }
             else { priority = 2; }
         }

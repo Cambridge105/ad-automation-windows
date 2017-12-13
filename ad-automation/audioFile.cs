@@ -17,11 +17,6 @@ namespace ad_automation
         public string mp3CommentString;
         public string serialisedJsonBlock;
 
-        int playsPerDay(DateTime targetDay, bool includeOvernight)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool isAdBreakBetweenStartAndEndDates(DateTime breakTime)
         {
             if (breakTime < this.endDate && breakTime > this.startDate)

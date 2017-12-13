@@ -83,10 +83,10 @@ namespace ad_automation
 
         private void addAdverts()
         {
+            int numFailures = 0;
             for (int i = 0; i < targetAds;)
             {
                 advert newAdvert = adForm.selectAd(breakTime);
-                int numFailures = 0;
                 if (newAdvert != null)
                 {
                     breakContents.Add(newAdvert);
@@ -100,16 +100,16 @@ namespace ad_automation
                 }
                 else
                 {
+                    numFailures++;
                     if (adForm.adsToPlayPerDay.Count() < 1)
                     {
                         break; // We've run out of adverts we can play
                     }
-                    else if (numFailures > 999)
+                    else if (numFailures > 99)
                     {
                         // Avoids the unlikely case where we might sit spinning at this point if there's only one advert left to play and it can't be played because of the keyword rule
-                        throw new NotEnoughFileOptionsException("There are adverts left to play but rules prevent them being played");
+                        break; // We don't want to throw an exception as the keyword might be permitted in a later break
                     }
-                    numFailures++;
                 }
             }
         }
