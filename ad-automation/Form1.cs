@@ -21,16 +21,16 @@ namespace ad_automation
         string advertPath = "";
         string promoPath = "";
         string targetPath = "";
-        DateTime nextMonday;
         public static List<advert> allAdverts = new List<advert>();
         public static List<advert> adsToPlayPerDay = new List<advert>(); // List of adverts by number of plays needed
         public static List<promo> allPromos = new List<promo>();
+        public static List<promo> allPromosWeighted = new List<promo>();
         List<adBreak> allBreaksList = new List<adBreak>();
         public static List<audioFile> thisBreak = new List<audioFile>();
         public static List<audioFile> lastBreak = new List<audioFile>();
         public static List<string> thisBreakKeywords = new List<string>();
         public bool advertDateHasBeenSet = false;
-
+        
         public static string jingleStudioPathValue { get; private set; }
 
         public adForm()
@@ -38,6 +38,7 @@ namespace ad_automation
             InitializeComponent();
             DateTime tomorrow = DateTime.Today.AddDays(1);
             createBreaksForPicker.Value = tomorrow;
+            loadAdvertBreaksFromDate();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -107,7 +108,7 @@ namespace ad_automation
 
         private void generateBreaksButton_Click(object sender, EventArgs e)
         {
-            createTargetDirectory();
+            createTargetDirectory(createBreaksForPicker.Value);
             createBreaks();
             jingleStudioPathValue = jinglesStudioPath.Text;
             progressBar1.Minimum = 0;
@@ -124,6 +125,7 @@ namespace ad_automation
             outputLog();
             fileBeingGeneratedLabel.Text = "Done";
             Process.Start(targetPath);  // Opens Windows Explorer to output directory
+            Application.Exit();
         }
 
         private void outputLog()
@@ -188,8 +190,8 @@ namespace ad_automation
         private static promo choosePromoAtRandom()
         {
             Random rnd = new Random();
-            int numericRnd = rnd.Next(0, allPromos.Count);
-            return allPromos[numericRnd];
+            int numericRnd = rnd.Next(0, allPromosWeighted.Count);
+            return allPromosWeighted[numericRnd];
         }
 
         private static advert chooseAdvertAtRandom()
@@ -201,13 +203,11 @@ namespace ad_automation
         }
 
 
-        private void createTargetDirectory()
+        private void createTargetDirectory(DateTime breakDate)
         {
-            string dateTime = DateTime.Now.ToString();
-            dateTime = dateTime.Replace("/", "");
-            dateTime = dateTime.Replace(" ", "");
-            dateTime = dateTime.Replace(":", "");
-            targetPath = targetPath + "\\" + dateTime;
+            string dateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string breakDateStr = breakDate.ToString("dd-MMM-yyyy");
+            targetPath = targetPath + "\\Adverts for " + breakDateStr + " - Created " + dateTime;
             Directory.CreateDirectory(targetPath);
         }
 
@@ -252,16 +252,22 @@ namespace ad_automation
                 tmpPromo.addToPromoTablePanel(promoTableLayoutPanel);
                 // Add promo mulitple times depending on priorities to weight the probabilityu of it being chosen
                 allPromos.Add(tmpPromo);
+                allPromosWeighted.Add(tmpPromo);
                 if (tmpPromo.priority < 3)
                 {
-                    allPromos.Add(tmpPromo);
-                    allPromos.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
                 }
                 if (tmpPromo.priority < 2)
                 {
-                    allPromos.Add(tmpPromo);
-                    allPromos.Add(tmpPromo);
-                    allPromos.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
+                    allPromosWeighted.Add(tmpPromo);
                 }
             }
         }
@@ -275,6 +281,12 @@ namespace ad_automation
         }
 
         private void createBreaksForPicker_ValueChanged(object sender, EventArgs e)
+        {
+            loadAdvertBreaksFromDate();
+        }
+
+
+        private void loadAdvertBreaksFromDate()
         {
             DateTime breakDate = createBreaksForPicker.Value.Date;
             string[] breaksOnDay = new string[] { "Select the day to set advert times" };
@@ -292,6 +304,7 @@ namespace ad_automation
             advertDateHasBeenSet = true;
             canGenerateButtonBeDisabled();
         }
+
     }
 }
 
