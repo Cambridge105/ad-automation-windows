@@ -29,7 +29,9 @@ namespace ad_automation
         public static List<audioFile> thisBreak = new List<audioFile>();
         public static List<audioFile> lastBreak = new List<audioFile>();
         public static List<string> thisBreakKeywords = new List<string>();
+        public static Dictionary<DateTime, string[]> csvDictionary = new Dictionary<DateTime, string[]>();
         public bool advertDateHasBeenSet = false;
+        public static bool breaksWithNoAds = false;
         
         public static string jingleStudioPathValue { get; private set; }
 
@@ -119,10 +121,16 @@ namespace ad_automation
             {
                 thisBreak.generateBreak();
                 thisBreak.outputM3UFile();
+                string[] csvOut = thisBreak.generateCsv();
                 progressBar1.PerformStep();
                 Application.DoEvents(); // Updates label containing file being created
+                csvDictionary.Add(thisBreak.breakTime, csvOut);
             }
             outputLog();
+            if (breaksWithNoAds)
+            {
+                MessageBox.Show("One or more breaks contain no adverts because there were none left to play", "Breaks without adverts", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             fileBeingGeneratedLabel.Text = "Done";
             Process.Start(targetPath);  // Opens Windows Explorer to output directory
             Application.Exit();
@@ -143,6 +151,17 @@ namespace ad_automation
                 logFileOutput += tmpPromo.createLogFileEntry();
             }
             System.IO.File.WriteAllText(targetPath + "\\promos.txt", logFileOutput);
+            string[] outputCsv = new string[10];
+            foreach (KeyValuePair<DateTime, string[]> entry in csvDictionary)
+            {
+                outputCsv[0] += "\"" + entry.Key.ToString() + "\",";
+                for (int i=0; i<entry.Value.Length; i++)
+                {
+                    outputCsv[(i + 1)] += "\"" + entry.Value[i] + "\",";
+                }
+            }
+            string outputCsvString = string.Join("\r\n", outputCsv);
+            System.IO.File.WriteAllText(targetPath + "\\breaks.csv", outputCsvString);
         }
 
         private void createBreaks()

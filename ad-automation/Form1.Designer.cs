@@ -346,7 +346,7 @@
             this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 330F));
             this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
             this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 311F));
-            this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this.promoTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 114F));
             this.promoTableLayoutPanel.Controls.Add(this.promoPlayFromLabel, 1, 0);
             this.promoTableLayoutPanel.Controls.Add(this.promoFilenameLabel, 0, 0);
             this.promoTableLayoutPanel.Controls.Add(this.promoPlayUntilLabel, 2, 0);
@@ -450,7 +450,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(934, 752);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(934, 751);
             this.Controls.Add(this.breaksToCreateGroupBox);
             this.Controls.Add(this.jinglesStudioPath);
             this.Controls.Add(this.jinglesLabel);

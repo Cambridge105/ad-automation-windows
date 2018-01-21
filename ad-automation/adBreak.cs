@@ -44,6 +44,10 @@ namespace ad_automation
                 m3uOut += content.targetPath + "\r\n";
             }
             System.IO.File.WriteAllText(outputFullPath, m3uOut);
+            if (actualAds < 1)
+            {
+                adForm.breaksWithNoAds = true;
+            }
         }
 
         private void addPromos()
@@ -122,6 +126,17 @@ namespace ad_automation
             {
                 handler(null, EventArgs.Empty);
             }
+        }
+
+        internal string[] generateCsv()
+        {
+            List<string> csvList = new List<string>();
+            foreach (audioFile breakItem in breakContents)
+            {
+                csvList.Add(breakItem.filename);
+            }
+            string[] csv = csvList.ToArray();
+            return csv;
         }
 
         internal void setIsOvernight()
