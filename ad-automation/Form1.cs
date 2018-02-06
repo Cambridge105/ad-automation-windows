@@ -69,6 +69,7 @@ namespace ad_automation
                 string advertPath = advertBrowserDialog.SelectedPath;
                 advertFolderSelectedLabel.Text = advertPath;
                 getAdvertsInFolder(advertPath);
+                checkEnoughAdverts();
                 return advertPath;
             }
             return "";
@@ -134,6 +135,19 @@ namespace ad_automation
             fileBeingGeneratedLabel.Text = "Done";
             Process.Start(targetPath);  // Opens Windows Explorer to output directory
             Application.Exit();
+        }
+
+        private void checkEnoughAdverts()
+        {
+            bool notEnoughAdverts = false;
+            if (allAdverts.Count <2) { notEnoughAdverts = true; }
+            int numBreaks = breakTimesOnDayTextBox.Lines.Count(); // allBreaksList may not be set yet
+            // allAdverts.Count +1 because at 99 plays/month, each ad needs to be played 3.3 times (=4) per day. With 3 ads/break, this means we need 4/3 breaks per ad, which is equal to always one more than the number of adverts.
+            if (numBreaks > (allAdverts.Count +1)) { notEnoughAdverts = true; }
+            if (notEnoughAdverts && numBreaks > 0 && allAdverts.Count > 0)
+            {
+                MessageBox.Show("There may not be enough adverts to fill all the breaks. \nThere are only " + allAdverts.Count.ToString() + " adverts to play in " + numBreaks.ToString() + " breaks. \nTry reducing the number of breaks to about " + (allAdverts.Count + 1).ToString() + ".", "Not enough adverts", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void outputLog()
@@ -322,6 +336,7 @@ namespace ad_automation
             breakTimesOnDayTextBox.Lines = breaksOnDay;
             advertDateHasBeenSet = true;
             canGenerateButtonBeDisabled();
+            checkEnoughAdverts();
         }
 
     }
